@@ -1,0 +1,13 @@
+the software in this directory requires installation of liblo and pyliblo.
+
+the gui software requires wxpython, and if you get a strange error in cubecolourdialog, make the following change in 
+/usr/lib/python2.6/dist-packages/wx-2.8-gtk2-unicode/wx/lib/agw/cubecolourdialog.py
+or wherever cubecolordialog is stored:
+
+in class Colour __init__ (line 1367 in my version) change: 
+
+   self.alpha = colour.Alpha()
+to:
+   self._alpha = colour.Alpha()
+
+hopefully this will be fixed in the next version of wxpython

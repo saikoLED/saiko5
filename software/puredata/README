@@ -1,0 +1,13 @@
+open analyzer.pd with pd-extended:
+
+http://puredata.info/downloads
+or
+git clone git://pure-data.git.sourceforge.net/gitroot/pure-data/pd-extended.git
+or
+In ubuntu, add: 
+deb http://apt.puredata.info/releases lucid main
+to /etc/apt/sources/
+
+
+In linux, you can install aubio with aptitude install pd-aubio
+and then you'll need to symlink the aubio package from /usr/lib/pd/extras to /usr/lib/pd-extended/extras
