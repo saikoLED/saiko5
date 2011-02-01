@@ -187,11 +187,23 @@ Intersection = ccdSource.Intersection
 PtFromAngle = ccdSource.PtFromAngle
 
 RECT_WIDTH = ccdSource.RECT_WIDTH
+
+def newColInit(self,colour):
+		wx.Colour.__init__(self)
+		self.r = colour.Red()
+		self.g = colour.Green()
+		self.b = colour.Blue()
+		self._alpha = 1
+		self.ToHSV()
+
+#	Can't call this function in versio 2.6 of wxpython because
+#		of bug, so redefine init manually:
+Colour.__init__ = newColInit
+
 class NewColour(Colour):
 	constrainPower = False
 	def __init__(self,colour):
-#		super.__init__(colour)
-#		Colour.__init__(self,colour)
+
                 super(NewColour,self).__init__(colour)
 		self.ToXYZ()
 		
