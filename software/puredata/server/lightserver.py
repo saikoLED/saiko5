@@ -32,5 +32,5 @@ print "SaikoControl Light Server Started!"
 while True:
     for light in lights:
         light.handletick()
-    time.sleep(0.02)
+    time.sleep(0.03)
         

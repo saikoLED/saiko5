@@ -16,7 +16,9 @@ Light13 = lightevents.LightObject('192.168.1.15','onset','randflash')
 Light14 = lightevents.LightObject('192.168.1.16','onset','randflash')
 Light15 = lightevents.LightObject('192.168.1.17','onset','randflash')
 
-Lights = [Light1, Light2, Light3, Light4, Light5, Light6, Light7, Light8, Light9, Light10, Light11, Light12, Light13, Light14, Light15]
+Lights = [Light1, Light2, Light3, Light4, Light5]
+
+#Lights = [Light1, Light2, Light3, Light4, Light5, Light6, Light7, Light8, Light9, Light10, Light11, Light12, Light13, Light14, Light15]
 
 # This defines the initial offset in colors.
 i=0.0

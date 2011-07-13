@@ -59,7 +59,7 @@ void udpapp_init(void)
 	uip_ipaddr_t addr;
 	struct uip_udp_conn *c;
 
-	uip_ipaddr(&addr, 192, 168, 1, 2);
+	uip_ipaddr(&addr, 255, 255, 255, 255);
 	c = uip_udp_new(&addr, HTONS(0));
 	if(c != NULL) {
 		uip_udp_bind(c, HTONS(2222));
