@@ -22,7 +22,7 @@ MODES = ['CK','Simu','Saiko']
 CURRENT_MODE = 2  # 2= saiko liblo
 MODE_NAME = MODES[CURRENT_MODE]
 
-IP_ADDRESSES = ["192.168.1.101","192.168.1.122"]
+IP_ADDRESSES = ["192.168.0.13"] #, ...
 
 from array import array
 

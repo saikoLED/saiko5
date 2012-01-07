@@ -83,31 +83,69 @@ static unsigned char parse_msg(void)
   int bytes_available = uip_datalen();
   
   unsigned char* pData = uip_appdata;
-  
+  float fRed,fGreen,fBlue;
   result = 1;
-  
+  int outEnable = 0;
+ 
   lo_message message = lo_message_deserialise(pData, bytes_available, &result);
   
   if (result == 0) {
     lo_arg** argv = lo_message_get_argv(message);
-    
-    lo_arg* red = argv[0];
-    lo_arg* green = argv[1];
-    lo_arg* blue = argv[2];  
+    int argc = lo_message_get_argc(message);
+    lo_arg *red,*green,*blue,*val1;
+    char* msg_path, *pos, test;
+    switch (argc) {
+      case 0:
+        break;
+      case 1:
+        msg_path = lo_get_path(pData,bytes_available);
+        pos = strstr(msg_path, '/fader');
+        if (pos != NULL) {
+          outEnable = 1;
+          val1 = argv[0];
+          test = msg_path[8]; // should be using pos...
+          if (test=='1')
+            fRed = val1->f;
+          else if (test=='2')
+            fGreen = val1->f;
+          else if (test=='3')
+            fBlue = val1->f;
+          else
+            fGreen=1;
+        }
+        break;
+      case 2:
+        break;
+      case 5:
+      case 4:  
+      case 3:
+        msg_path = lo_get_path(pData,bytes_available);
+        if ((msg_path == NULL) || (msg_path[0] != '/'))
+           break;
+        if ((msg_path[1] != 'l') && (msg_path[1] != 'L'))
+           break;
+        red = argv[0];
+        green = argv[1];
+        blue = argv[2];  
+        fRed = red->f;
+        fGreen = green->f;
+        fBlue = blue->f;
+        outEnable = 1;
+        break;
 
-    float fRed = red->f;
-    float fGreen = green->f;
-    float fBlue = blue->f;
-        
-    analogWrite(redPin, (unsigned char)(fRed * 0xFF));
-    analogWrite(greenPin, (unsigned char)(fGreen * 0xFF));
-    analogWrite(bluePin, (unsigned char)(fBlue * 0xFF));
-    
+      }
+  }
+  if (outEnable) {
+          
+      analogWrite(redPin, (unsigned char)(fRed * 0xFF));
+      analogWrite(greenPin, (unsigned char)(fGreen * 0xFF));
+      analogWrite(bluePin, (unsigned char)(fBlue * 0xFF));
+
   }
   
   lo_message_free(message);
   s.state = STATE_QUIT;
-  return 1;
+  return(1);
 }
 
 //static void send_request(void)
