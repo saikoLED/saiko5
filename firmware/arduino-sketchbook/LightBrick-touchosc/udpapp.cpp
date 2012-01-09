@@ -1,14 +1,11 @@
 
-/******************************************************************************
+/*
+  udpapp.cpp
+  LightBrick Wireless Shield Control Code
+  Copyright(c) 2011 SaikoLED. All rights reserved.
 
-  Filename:		udpapp.h
-  Description:	UDP app for the WiShield 1.0
-
- ******************************************************************************
-
-  TCP/IP stack and driver for the WiShield 1.0 wireless devices
-
-  Copyright(c) 2009 Async Labs Inc. All rights reserved.
+  Based on udpapp.h: TCP/IP stack and driver for the WiShield 1.0 wireless devices
+  Copyright(c) 2009 Asynclabs Inc. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -24,11 +21,13 @@
   Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
   Contact Information:
+  <dan@saikoled.com>
   <asynclabs@asynclabs.com>
 
-   Author               Date        Comment
+   Author                       Date            Comment
   ---------------------------------------------------------------
-   AsyncLabs			07/11/2009	Initial version
+   SaikoLED                     01/08/2011      Convert to CPP, add OSC
+   AsyncLabs			07/11/2009      Initial version
 
  *****************************************************************************/
 extern "C" {
@@ -54,7 +53,10 @@ extern "C" {
 
 t_hsi2rgb color;
 static struct udpapp_state s;
-  bool fullBrightMode = false; //replace with byte for 8 toggles..
+bool smoothingMode = false; //replace with byte for 8 toggles..
+bool velocityMode = false; //replace with byte for 8 toggles..
+bool recordMode = false; //replace with byte for 8 toggles..
+bool fullBrightMode = false; //replace with byte for 8 toggles..
 
 static unsigned char parse_msg(void)
 {
@@ -119,6 +121,12 @@ static unsigned char parse_msg(void)
            val1 = argv[0];
            test = msg_path[pos+1]; //maybe need a case for '\0' ->white fade
            Serial.println(val1->f);
+           if (test=='1')
+             smoothingMode = (0.0 < val1->f);
+           if (test=='2')
+             velocityMode = (0.0 < val1->f);
+           if (test=='3')
+             recordMode = (0.0 < val1->f);
            if (test=='4')
              fullBrightMode = (0.0 < val1->f);
          }
