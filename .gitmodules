@@ -1,0 +1,3 @@
+[submodule "firmware/arduino-sketchbook/libraries/WiShield"]
+	path = firmware/arduino-sketchbook/libraries/WiShield
+	url = git://github.com/saikoLED/WiShield_user_contrib.git
