@@ -9,19 +9,18 @@
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
 
-#define light_number 11
-#define lag_per_light 20000
+#define light_number 8
 
 // Wireless configuration parameters ----------------------------------------
-unsigned char local_ip[] = {192,168,1,(light_number + 2)};	// IP address of WiShield
-unsigned char gateway_ip[] = {192,168,1,2};	// router or gateway IP address
+unsigned char local_ip[] = {192,168,1,108};	// IP address of WiShield
+unsigned char gateway_ip[] = {192,168,1,1};	// router or gateway IP address
 unsigned char subnet_mask[] = {255,255,255,0};	// subnet mask for the local network
-char ssid[] = "lednet";		// max 32 bytes
+char ssid[] = "evilcorp";		// max 32 bytes
 
-unsigned char security_type = 2;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
+unsigned char security_type = 3;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
 
 // WPA/WPA2 passphrase
-const prog_char security_passphrase[] PROGMEM = {"18171615"};	// max 64 characters
+const prog_char security_passphrase[] PROGMEM = {"cockknocker"};	// max 64 characters
 
 // WEP 128-bit keys
 // sample HEX keys
@@ -45,14 +44,6 @@ unsigned char security_passphrase_len;
 
 void setup()
 {
-  unsigned long startTime;
-  int i;
-  // Lag per light, without risk of overflow.
-//  if(light_number != 1) {
-//    for (i=1;i<light_number;i++) {
-//      delay(lag_per_light);
-//    }
-//  }
   analogWrite(bluePin, 255);
   delay(50);
   analogWrite(redPin, 2);
