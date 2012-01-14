@@ -19,7 +19,7 @@
 # remember last color or query network for it on startup, remember custom colors
 
 import liblo
-address = liblo.Address("192.168.1.200","2222")
+address = liblo.Address("192.168.0.3","2222")
 
 class LightController:
 	def SendLights(self,r,g,b):

@@ -108,7 +108,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
     Serial.println(msg_path);
   /* switch by number of arguments to handle, then pathname */
   switch (argc) {
-    /*    case 0:
+        case 0:
           break;
         case 1:
           pos = msg_path.indexOf('/fader');
@@ -175,7 +175,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
           }
           break;
         case 5:
-        case 4:  */
+        case 4:  
         case 3:
            val1 = argv[0];
            val2 = argv[1];
