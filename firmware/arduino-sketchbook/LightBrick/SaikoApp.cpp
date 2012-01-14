@@ -137,7 +137,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
               hsi2rgb(&color); 
               }
             else if (test=='6') {
-              color.fH = 360.0 * val1->f;
+              color.fH = val1->f;
               hsi2rgb(&color); 
               }
             else
@@ -169,7 +169,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
             test = msg_path[pos+1]; 
             if (test == '\0'){
               color.fS = argv[0]->f;
-              color.fH = (argv[1]->f)*360;
+              color.fH = (argv[1]->f);
               hsi2rgb(&color);
             }
           }
@@ -189,7 +189,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
            } 
            else if (msg_path.indexOf('/set/hsi') != -1)
            {
-               color.fH = val1->f*360;
+               color.fH = val1->f;
                color.fS = val2->f;
                color.fI = val3->f;
                hsi2rgb(&color);

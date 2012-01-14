@@ -1,7 +1,7 @@
 import socket
 import time
 
-host = "192.168.1.200"
+host = "192.168.0.3"
 port = 2222
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

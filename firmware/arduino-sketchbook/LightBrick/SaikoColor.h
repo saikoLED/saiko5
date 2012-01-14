@@ -6,7 +6,7 @@
 #define DEG_TO_RAD(X) (M_PI*(X)/180)
 #define M_PI 3.14159
 
-/* all on scale of 0 to 1.0 except hue: 0->360 */
+/* all on scale of 0 to 1.0  */
 typedef struct _colorsHSIandRGB {
   float fH,fS,fI;
   float fRed,fGreen,fBlue;
@@ -17,7 +17,7 @@ void hsi2rgb(SColor *x) {
   // do the conversion
   float r,g,b;
   float H, S, I;
-  H = x->fH;
+  H = x->fH*360.0;
   S = x->fS;
   I = x->fI;
 
@@ -77,7 +77,7 @@ void rgb2hsi(SColor *x)
 		{
 			H = 2.0*M_PI - H;
 		}
-		H = 360.0*H/(2.0*M_PI);
+		H = H/(2.0*M_PI);
 	}
 }
 
