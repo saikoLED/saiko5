@@ -72,17 +72,16 @@ static unsigned char parse_msg(void)
   result = 1;
   
   lo_message message = lo_message_deserialise(pData, bytes_available, &result);
-  
+  char modes =0;
   if (result == 0) {
     lo_arg** argv = lo_message_get_argv(message);
     int argc = lo_message_get_argc(message);
-    char modes;  
-    
-    respondToOSC(argc,argv,lo_get_path(pData,bytes_available),outEnable,modes);
+    String msg_path = lo_get_path(pData,bytes_available);
+    respondToOSC(argc,argv,msg_path,outEnable,modes);
     //nextScriptStep(&outEnable); //should set outEnable to true if more steps
   }
   if (outEnable) {
-      if (fullBrightMode) {
+      if (fullBrightMode(modes)) {
         Serial.println("fullbright");
         color.fI = 1;
         hsi2rgb(&color);
@@ -109,7 +108,7 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
     Serial.println(msg_path);
   /* switch by number of arguments to handle, then pathname */
   switch (argc) {
-        case 0:
+    /*    case 0:
           break;
         case 1:
           pos = msg_path.indexOf('/fader');
@@ -176,22 +175,19 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
           }
           break;
         case 5:
-        case 4:  
+        case 4:  */
         case 3:
            val1 = argv[0];
            val2 = argv[1];
            val3 = argv[2];  
-           if (msg_path.equals('/set/rgb'))
+           if (msg_path.indexOf('/set/rgb') != -1)
            {
-               val1 = argv[0];
-               val2 = argv[1];
-               val3 = argv[2];  
                color.fRed = val1->f;
                color.fGreen = val2->f;
                color.fBlue = val3->f;
                rgb2hsi(&color); 
            } 
-           else if (msg_path.equals('/set/hsi'))
+           else if (msg_path.indexOf('/set/hsi') != -1)
            {
                color.fH = val1->f*360;
                color.fS = val2->f;
@@ -199,6 +195,9 @@ void respondToOSC(int argc, lo_arg** argv, String msg_path,
                hsi2rgb(&color);
             } 
             else { //legacy support, remove in future version
+            
+              if (DEBUG)
+                Serial.println("missing path, assume RGB");
               if ((msg_path == NULL) || (msg_path[0] != '/'))
                  break;
               color.fRed = val1->f;
@@ -255,6 +254,11 @@ extern "C" {
 
   void udpapp_init(void)
   {
+    
+        color.fRed = 0;
+        color.fGreen = 0;
+        color.fBlue = 0;
+        rgb2hsi(&color);
         if (DEBUG)
         {
           Serial.begin(115200);
