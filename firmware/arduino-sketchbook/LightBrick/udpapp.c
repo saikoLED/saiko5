@@ -37,6 +37,7 @@
 #include "udpapp.h"
 #include "config.h"
 #include "lo.h"
+#include <math.h>
 
 #define redPin 3
 #define greenPin 5
@@ -71,14 +72,7 @@ void udpapp_init(void)
 }
 
 static unsigned char parse_msg(void)
-{
-//	if (memcmp(uip_appdata, "Hello", 5) == 0) {
-//		return 1;
-//	}
-//  analogWrite(redPin, 0xFF);
-//  analogWrite(greenPin, 0);
-//  analogWrite(bluePin, 0);
-  
+{  
   int result = 0;
   int bytes_available = uip_datalen();
   
@@ -89,19 +83,34 @@ static unsigned char parse_msg(void)
   lo_message message = lo_message_deserialise(pData, bytes_available, &result);
   
   if (result == 0) {
+    char* path = lo_url_get_path(lo_address_get_url(lo_message_get_source(message)));
     lo_arg** argv = lo_message_get_argv(message);
-    
-    lo_arg* red = argv[0];
-    lo_arg* green = argv[1];
-    lo_arg* blue = argv[2];  
+ 
+    if (!strcmp(path,'/set/rgb')) {      
+      lo_arg* red = argv[0];
+      lo_arg* green = argv[1];
+      lo_arg* blue = argv[2];  
 
-    float fRed = red->f;
-    float fGreen = green->f;
-    float fBlue = blue->f;
+      float fRed = red->f;
+      float fGreen = green->f;
+      float fBlue = blue->f;
         
-    analogWrite(redPin, (unsigned char)(fRed * 0xFF));
-    analogWrite(greenPin, (unsigned char)(fGreen * 0xFF));
-    analogWrite(bluePin, (unsigned char)(fBlue * 0xFF));
+      analogWrite(redPin, (unsigned char)(fRed * 0xFF));
+      analogWrite(greenPin, (unsigned char)(fGreen * 0xFF));
+      analogWrite(bluePin, (unsigned char)(fBlue * 0xFF));
+    }
+    else if (!strcmp(path, '/set/hsi')) {     
+      lo_arg* H = argv[0];
+      lo_arg* S = argv[1];
+      lo_arg* I = argv[2];  
+
+      unsigned char rgb[3];
+      hsi2rgb(H, S, I, rgb);
+        
+      analogWrite(redPin, rgb[0]);
+      analogWrite(greenPin, rgb[1]);
+      analogWrite(bluePin, rgb[2]);
+    }
     
   }
   
@@ -109,30 +118,6 @@ static unsigned char parse_msg(void)
   s.state = STATE_QUIT;
   return 1;
 }
-
-//static void send_request(void)
-//{
-//	char str[] = "Hello. What is your name?\n";
-//
-//	memcpy(uip_appdata, str, strlen(str));
-//	uip_send(uip_appdata, strlen(str));
-//}
-
-//static void send_response(void)
-//{
-//	char i = 0;
-//	char str[] = "Hello ";
-//
-//	while ( ( ((char*)uip_appdata)[i] != '\n') && i < 9) {
-//		s.inputbuf[i] = ((char*)uip_appdata)[i];
-//		i++;
-//	}
-//	s.inputbuf[i] = '\n';
-//
-//	memcpy(uip_appdata, str, 6);
-//	memcpy(uip_appdata+6, s.inputbuf, i+1);
-//	uip_send(uip_appdata, i+7);
-//}
 
 static PT_THREAD(handle_connection(void))
 {
@@ -144,25 +129,9 @@ static PT_THREAD(handle_connection(void))
 		PT_WAIT_UNTIL(&s.pt, uip_newdata());
 
 		if(uip_newdata() && parse_msg()) {
-//			s.state = STATE_HELLO_RECEIVED;
 			uip_flags &= (~UIP_NEWDATA);
-//			break;
 		}
-//	} while(s.state != STATE_HELLO_RECEIVED);
         } while (s.state != STATE_QUIT);
-
-//	do {
-//		send_request();
-//		PT_WAIT_UNTIL(&s.pt, uip_newdata());
-//
-//		if(uip_newdata()) {
-//			s.state = STATE_NAME_RECEIVED;
-//			uip_flags &= (~UIP_NEWDATA);
-//			break;
-//		}
-//	} while(s.state != STATE_NAME_RECEIVED);
-
-//	send_response();
 
 	s.state = STATE_INIT;
 
@@ -172,4 +141,37 @@ static PT_THREAD(handle_connection(void))
 void udpapp_appcall(void)
 {
 	handle_connection();
+}
+
+void hsi2rgb(float H, float S, float I, int* rgb) {
+  float H_rad, H_radm;
+  unsigned char r, g, b;
+  H = fmod(H,360); // Rotate Hue to be between 0 and 360.
+  S = S>0?(S<1?S:1):0; // clamp S and I to interval [0,1]
+  I = I>0?(I<1?I:1):0;
+    
+  if(H < 120) {
+    H_rad = H * 0.017453293;
+    H_radm = (60-H) * 0.017453293;
+    r = 255*I/3*(1+S*cos(H_rad)/cos(H_radm));
+    g = 255*I/3*(1+S*(1-cos(H_rad)/cos(H_radm)));
+    b = 255*I/3*(1-S);
+  } else if(H < 240) {
+    H = H - 120;
+    H_rad = H * 0.017453293;
+    H_radm = (60-H) * 0.017453293;
+    g = 255*I/3*(1+S*cos(H_rad)/cos(H_radm));
+    b = 255*I/3*(1+S*(1-cos(H_rad)/cos(H_radm)));
+    r = 255*I/3*(1-S);
+  } else {
+    H = H - 240;
+    H_rad = H * 0.017453293;
+    H_radm = (60-H) * 0.017453293;
+    b = 255*I/3*(1+S*cos(H_rad)/cos(H_radm));
+    r = 255*I/3*(1+S*(1-cos(H_rad)/cos(H_radm)));
+    g = 255*I/3*(1-S);
+  }
+  rgb[0] = r;
+  rgb[1] = g;
+  rgb[2] = b;
 }
