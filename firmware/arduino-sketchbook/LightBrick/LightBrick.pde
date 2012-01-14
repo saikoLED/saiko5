@@ -4,7 +4,6 @@
  * A simple UDP endpoint example using the WiShield 1.0
  */
 #include <WiShield.h>
-#include <lo.h>
 
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
