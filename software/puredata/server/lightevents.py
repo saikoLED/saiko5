@@ -2,19 +2,75 @@ import liblo
 import math
 import HSI2RGB
 import Queue
+import random
 
-def eventhandler(light,event,message):
+def flashinit(light, targetintensity, finalintensity, hueincrement, saturation, upticks, downticks):
+    # First, shift the color on each init by the hue increment given to the function.
+    light.currenthue = light.currenthue + hueincrement
+    # Test for moving the hue outside of the circle.
+    if light.currenthue >= 360:
+        light.currenthue = light.currenthue - 360
+    light.targetintensity = targetintensity
+    light.finalintensity = finalintensity
+    light.currentsaturation = saturation
+    light.upticks = upticks
+    light.downticks = downticks
+
+    # Set the state to the initial part of a flash.
+    if math.fabs(light.currentintensity-light.targetintensity) < 1.0/255.0:
+        light.currentintensity = light.targetintensity
+        light.targetintensity = light.finalintensity
+        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.downticks
+        light.state = 'downintensity'
+    else:
+        light.state = 'upintensity'
+        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.upticks
+
+    light.hueincrement = 0
+    light.saturationincrement = 0
+
+def randflashinit(light, targetintensity, finalintensity, hueincrement, saturation, upticks, downticks):
+    # First, shift the color on each init by the hue increment given to the function.
+    light.currenthue = 360*random.random()
+    # Test for moving the hue outside of the circle.
+    if light.currenthue >= 360:
+        light.currenthue = light.currenthue - 360
+    light.targetintensity = targetintensity
+    light.finalintensity = finalintensity
+    light.currentsaturation = saturation
+    light.upticks = upticks
+    light.downticks = downticks
+
+    # Set the state to the initial part of a flash.
+    if math.fabs(light.currentintensity-light.targetintensity) < 1.0/255.0:
+        light.currentintensity = light.targetintensity
+        light.targetintensity = light.finalintensity
+        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.downticks
+        light.state = 'downintensity'
+    else:
+        light.state = 'upintensity'
+        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.upticks
+
+    light.hueincrement = 0
+    light.saturationincrement = 0
+
+def eventhandler(light,event,msg):
     if light.event == event:
         if light.mode == 'flash':
             # Initialize a new flash, with the new target intensity
             # set to 1, final intensity set to 0, hue increment set to
             # 360/5 (5 times to go from red to red), and the saturation
             # set to 1, over 25 ticks up and 25 ticks down.
-            numlights = message[0]
-            targetintensity = message[1]
-            flashinit(light, targetintensity, 0.0, 360.0/numlights, 1.0, 20, 20)
-        elif light.mode == 'setcolor':
-            light.currenthue, light.currentsaturation, light.currentintensity = args
+            numlights = msg[0]
+            targetintensity = msg[1]
+            ticks = msg[2]
+            flashinit(light, targetintensity, 0.0, 360.0/numlights, 1.0, ticks, ticks)
+        elif light.mode == 'randflash':
+            numlights = msg[0]
+            targetintensity = msg[1]
+            ticks = msg[2]
+            saturation = 0.2*random.random()+0.8
+            randflashinit(light, targetintensity, 0.0, 360.0/numlights, saturation, ticks, ticks)
 
 class eventcall:
     def __init__(self, light, event, message):
@@ -36,31 +92,6 @@ def flashtick(light):
             light.currentintensity = light.targetintensity
             light.brightnenessincrement = 0
             light.state = 'idle'
-
-def flashinit(light, targetintensity, finalintensity, hueincrement, saturation, upticks, downticks):
-    # First, shift the color on each init by the hue increment given to the function.
-    light.currenthue = light.currenthue + hueincrement
-    # Test for moving the hue outside of the circle.
-    if light.currenthue >= 360:
-        light.currenthue = light.currenthue - 360
-    light.targetintensity = targetintensity
-    light.finalintensity = finalintensity
-    light.saturation = saturation
-    light.upticks = upticks
-    light.downticks = downticks
-
-    # Set the state to the initial part of a flash.
-    if math.fabs(light.currentintensity-light.targetintensity) < 1.0/255.0:
-        light.currentintensity = light.targetintensity
-        light.targetintensity = light.finalintensity
-        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.downticks
-        light.state = 'downintensity'
-    else:
-        light.state = 'upintensity'
-        light.intensityincrement = (light.targetintensity - light.currentintensity)/light.upticks
-
-    light.hueincrement = 0
-    light.saturationincrement = 0
 
 class LightObject:
     currenthue = 0.0
@@ -87,6 +118,8 @@ class LightObject:
         self.eventqueue.put(eventcall(self,event,message))
     def handletick(self):
         if self.mode == 'flash':
+            flashtick(self)
+        if self.mode == 'randflash':
             flashtick(self)
         R, G, B = HSI2RGB.convert(self.currenthue, self.currentsaturation, self.currentintensity)
         liblo.send(self.address,'/light/color/set',('f', R),('f', G),('f', B))

@@ -1,7 +1,7 @@
 import liblo
 import time
 
-addresses = [liblo.Address("192.168.1.200","2222"),liblo.Address("192.168.1.201","2222"),liblo.Address("192.168.1.202","2222"),liblo.Address("192.168.1.203","2222"),liblo.Address("192.168.1.204","2222"),liblo.Address("192.168.1.205","2222"),liblo.Address("192.168.1.206","2222"),liblo.Address("192.168.1.207","2222")]
+addresses = [liblo.Address("192.168.1.3","2222"),liblo.Address("192.168.1.4","2222"),liblo.Address("192.168.1.5","2222"),liblo.Address("192.168.1.6","2222"),liblo.Address("192.168.1.7","2222"),liblo.Address("192.168.1.8","2222"),liblo.Address("192.168.1.9","2222"),liblo.Address("192.168.1.10","2222"),liblo.Address("192.168.1.11","2222"),liblo.Address("192.168.1.12","2222"),liblo.Address("192.168.1.13","2222"),liblo.Address("192.168.1.14","2222"),liblo.Address("192.168.1.15","2222"),liblo.Address("192.168.1.16","2222"),liblo.Address("192.168.1.17","2222")]
 
 r=0
 g=0

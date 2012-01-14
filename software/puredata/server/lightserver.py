@@ -10,14 +10,11 @@ class MyServer(ServerThread):
     def __init__(self):
         ServerThread.__init__(self, 2223)
 
-#    @make_method(None, None)
-#    def fallback(self, path, args):
-#        print "received unknown message '%s'" % path
-
-    @make_method('/event/onset', 'f')
+    @make_method('/event/onset', 'ff')
     def onset_callback(self, path, message):
         for light in lights:
-            light.handleevent('onset', (len(lights), message[0]))
+            newmessage = (len(lights), message[0], message[1])
+            light.handleevent('onset', newmessage)
 
 try:
     server = MyServer()
@@ -28,12 +25,12 @@ except liblo.ServerError, err:
 server.start()
 
 for light in lights:
-    light.handleevent('onset', (len(lights), 1.0))
+    light.handleevent('onset', (len(lights), 1.0, 10))
 
 print "SaikoControl Light Server Started!"
 
 while True:
     for light in lights:
         light.handletick()
-    time.sleep(0.01)
+    time.sleep(0.03)
         
