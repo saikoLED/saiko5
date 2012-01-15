@@ -10,7 +10,6 @@
 #define WIRELESS_MODE_ADHOC	2
 
 #define light_number 1
-#define lag_per_light 20000
 
 // Wireless configuration parameters ----------------------------------------
 unsigned char local_ip[] = {192,168,0,(light_number + 2)};	// IP address of WiShield
@@ -45,14 +44,6 @@ unsigned char security_passphrase_len;
 
 void setup()
 {
-  unsigned long startTime;
-  int i;
-  // Lag per light, without risk of overflow.
-//  if(light_number != 1) {
-//    for (i=1;i<light_number;i++) {
-//      delay(lag_per_light);
-//    }
-//  }
   analogWrite(bluePin, 255);
   delay(50);
   analogWrite(redPin, 2);
