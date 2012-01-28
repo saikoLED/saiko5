@@ -20,7 +20,7 @@ char ssid[] = "saikoled.com";		// max 32 bytes
 unsigned char security_type = 0;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
 
 // WPA/WPA2 passphrase
-const prog_char security_passphrase[] PROGMEM = {"18171615"};	// max 64 characters
+const prog_char security_passphrase[] PROGMEM = {"saikoled.com"};	// max 64 characters
 
 // WEP 128-bit keys
 // sample HEX keys
@@ -56,6 +56,8 @@ void setup()
   delay(500);
   analogWrite(bluePin, 0);
 }
+
+const prog_char webpage[] PROGMEM = {"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<center><h1>Hello World!! I am WiShield</h1><form method=\"get\" action=\"0\">Toggle LED:<input type=\"submit\" name=\"0\" value=\"LED1\"></input></form></center>"};
 
 void loop()
 {

@@ -35,8 +35,11 @@ extern "C" {
 }
 
 #include "udpapp.h"
+//#include "webserver.h"
 #include "config.h"
 #include "SaikoColor.h"
+
+
 
 void respondToOSC(int argc, lo_arg** argv, String msg_path,
                     int &outEnable, char &outputModes);
@@ -247,6 +250,71 @@ static PT_THREAD(handle_connection(void))
 	PT_END(&s.pt);
 }
 
+
+unsigned short fill_buf(void* blk)
+{
+	unsigned short webpage_len;
+
+	webpage_len = (strlen_P(webpage)>uip_mss())?uip_mss():strlen_P(webpage);
+
+	memcpy_P(uip_appdata, webpage, webpage_len);
+	return webpage_len;
+}
+
+
+
+#define ISO_nl      0x0a
+#define ISO_space   0x20
+#define ISO_slash   0x2f
+
+const unsigned char http_get[5] = {0x47, 0x45, 0x54, 0x20, };	// "GET "
+
+static int handle_www_connection(struct webserver_state *s)
+  {
+  	PSOCK_BEGIN(&s->p);
+  
+  	// the incoming GET request will have the following format:
+  	// GET / HTTP/1.1 ....
+  	// we have to parse this string to determine the resource being requested
+  	// if the requested resource is not the root webpage ('/') then,
+  	// GET /<resource name> HTTP/1.1 ....
+  	// we should parse the specific resource and react appropriately
+  
+  	// read incoming data until we read a space character
+  	PSOCK_READTO(&s->p, ISO_space);
+  
+  	// parse the data to determine if it was a GET request
+  	if(strncmp((char *)s->inputbuf, (char *)http_get, 4) != 0) {
+  		PSOCK_CLOSE_EXIT(&s->p);
+  	}
+  
+  	// continue reading until the next space character
+  	PSOCK_READTO(&s->p, ISO_space);
+  
+  	// determine the requested resource
+  	// in this case, we check if the request was for the '/' root page
+  	// AKA index.html
+  	if(s->inputbuf[0] != ISO_slash) {
+  		// request for unknown webpage, close and exit
+  		PSOCK_CLOSE_EXIT(&s->p);
+  	}
+  
+  	if(s->inputbuf[1] != ISO_space) {
+  		// request for unavailable resource
+  		// not supported, modify to add support for additional resources
+  		PSOCK_CLOSE_EXIT(&s->p);
+  	}
+  
+  	//PSOCK_SEND_STR(&s->p, "HTTP/1.1 200 OK\r\n");
+  	//PSOCK_SEND_STR(&s->p, "Content-Type: text/html\r\n");
+  	//PSOCK_SEND_STR(&s->p, "\r\n");
+  	//PSOCK_SEND_STR(&s->p, "Hello World, I am WiShield");
+  	//PSOCK_SEND_STR(&s->p, "<center><h1>Hello World!! I am WiShield</h1></center>");
+  	PSOCK_GENERATOR_SEND(&s->p, fill_buf, 0);
+  	PSOCK_CLOSE(&s->p);
+  	PSOCK_END(&s->p);
+  }
+
 extern "C" {
   void dummy_app_appcall(void)
   {
@@ -254,7 +322,6 @@ extern "C" {
 
   void udpapp_init(void)
   {
-    
         color.fRed = 0;
         color.fGreen = 0;
         color.fBlue = 0;
@@ -281,6 +348,21 @@ extern "C" {
   {
 	handle_connection();
   }
+  /* WEBSERVER */
+  void webserver_init(void)
+  {
+  	uip_listen(HTONS(80));
+  }
+  
+  void webserver_appcall(void)
+  {
+  	struct webserver_state *s = &(uip_conn->appstate);
+  
+  	if(uip_connected()) {
+  		PSOCK_INIT(&s->p, s->inputbuf, sizeof(s->inputbuf));
+  	}
+  
+  	handle_www_connection(s);
+  }
+  
 }
-
-
