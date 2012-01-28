@@ -34,7 +34,7 @@ extern "C" {
 #include "uip.h"
 }
 
-#include "udpapp.h"
+//#include "udpapp.h"
 //#include "webserver.h"
 #include "config.h"
 #include "SaikoColor.h"
@@ -66,7 +66,8 @@ bool fullBrightMode(char bits) {return (bits & (1<<4));}
 
 static unsigned char parse_msg(void)
 {
-
+  if (DEBUG)
+    Serial.println("parse_msg entered");
   int result = 0;
   int bytes_available = uip_datalen();
   unsigned char* pData = (unsigned char*)uip_appdata;
