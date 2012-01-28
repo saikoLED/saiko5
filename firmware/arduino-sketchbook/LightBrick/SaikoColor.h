@@ -1,5 +1,5 @@
 #include <math.h>
-#include "WProgram.h"  // for String and Serial
+#include "Arduino.h"  // for String and Serial
 #include "lo.h"
 
 
