@@ -15,12 +15,12 @@
 unsigned char local_ip[] = {192,168,0,(light_number + 2)};	// IP address of WiShield
 unsigned char gateway_ip[] = {192,168,0,1};	// router or gateway IP address
 unsigned char subnet_mask[] = {255,255,255,0};	// subnet mask for the local network
-char ssid[] = "saikoled.com";		// max 32 bytes
+char ssid[] = "169";		// max 32 bytes
 
-unsigned char security_type = 0;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
+unsigned char security_type = 3;	// 0 - open; 1 - WEP; 2 - WPA; 3 - WPA2
 
 // WPA/WPA2 passphrase
-const prog_char security_passphrase[] PROGMEM = {"saikoled.com"};	// max 64 characters
+const prog_char security_passphrase[] PROGMEM = {"minerva22"};	// max 64 characters
 
 // WEP 128-bit keys
 // sample HEX keys
@@ -33,7 +33,7 @@ prog_uchar wep_keys[] PROGMEM = {	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
 // setup the wireless mode
 // infrastructure - connect to AP
 // adhoc - connect to another WiFi device
-unsigned char wireless_mode = WIRELESS_MODE_ADHOC;
+unsigned char wireless_mode = WIRELESS_MODE_INFRA;
 unsigned char ssid_len;
 unsigned char security_passphrase_len;
 
@@ -49,7 +49,7 @@ void setup()
   analogWrite(redPin, 2);
   analogWrite(greenPin, 0);
   analogWrite(bluePin, 0);
-  WiFi.init(40);
+  WiFi.init(50);
   analogWrite(redPin, 0);
   analogWrite(greenPin, 0);
   analogWrite(bluePin, 255);

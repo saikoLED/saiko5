@@ -1,5 +1,4 @@
 #include <math.h>
-#include "Arduino.h"  // for String and Serial
 #include "lo.h"
 
 
@@ -49,12 +48,12 @@ void hsi2rgb(SColor *x) {
 
 void rgb2hsi(SColor *x)
 {
-	float &R = (x->fRed);
-	float &G = (x->fGreen);
-	float &B = (x->fBlue);
-	float &H = (x->fH);
-	float &S = (x->fS);
-	float &I = (x->fI);
+	float R = (x->fRed);
+	float G = (x->fGreen);
+	float B = (x->fBlue);
+	float H = (x->fH);
+	float S = (x->fS);
+	float I = (x->fI);
 
 	float minv = R;
 	if (G < minv)
