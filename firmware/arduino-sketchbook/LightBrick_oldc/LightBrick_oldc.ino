@@ -33,7 +33,7 @@ prog_uchar wep_keys[] PROGMEM = {	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
 // setup the wireless mode
 // infrastructure - connect to AP
 // adhoc - connect to another WiFi device
-unsigned char wireless_mode = WIRELESS_MODE_INFRA;
+unsigned char wireless_mode = WIRELESS_MODE_ADHOC;
 unsigned char ssid_len;
 unsigned char security_passphrase_len;
 
