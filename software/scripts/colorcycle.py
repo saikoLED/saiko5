@@ -1,8 +1,7 @@
 import liblo
 import time
 
-addresses = [liblo.Address("192.168.0.3","2222")]
-
+from address import addresses
 
 r=0
 g=0

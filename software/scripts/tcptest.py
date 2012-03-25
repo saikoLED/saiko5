@@ -1,6 +1,6 @@
 import socket
 
-TCP_IP = '192.168.1.200'
+TCP_IP = '192.168.1.116'
 TCP_PORT = 2222
 BUFFER_SIZE = 100
 MESSAGE = chr(0x04) + '2222'
