@@ -83,10 +83,10 @@ static unsigned char parse_msg(void)
   lo_message message = lo_message_deserialise(pData, bytes_available, &result);
   
   if (result == 0) {
-    char* path = lo_url_get_path(lo_address_get_url(lo_message_get_source(message)));
+    //char* path = lo_url_get_path(lo_address_get_url(lo_message_get_source(message)));
     lo_arg** argv = lo_message_get_argv(message);
  
-    if (!strcmp(path,'/set/rgb')) {      
+    //if (!strcmp(path,'/set/rgb')) {      
       lo_arg* red = argv[0];
       lo_arg* green = argv[1];
       lo_arg* blue = argv[2];  
@@ -98,7 +98,7 @@ static unsigned char parse_msg(void)
       analogWrite(redPin, (unsigned char)(fRed * 0xFF));
       analogWrite(greenPin, (unsigned char)(fGreen * 0xFF));
       analogWrite(bluePin, (unsigned char)(fBlue * 0xFF));
-    }
+    /*}
     else if (!strcmp(path, '/set/hsi')) {     
       lo_arg* H = argv[0];
       lo_arg* S = argv[1];
@@ -110,7 +110,7 @@ static unsigned char parse_msg(void)
       analogWrite(redPin, rgb[0]);
       analogWrite(greenPin, rgb[1]);
       analogWrite(bluePin, rgb[2]);
-    }
+    }*/
     
   }
   
