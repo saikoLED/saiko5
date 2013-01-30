@@ -9,11 +9,11 @@
 #define WIRELESS_MODE_INFRA	1
 #define WIRELESS_MODE_ADHOC	2
 
-#define light_number 8
+#define light_number 2
 
 // Wireless configuration parameters ----------------------------------------
-unsigned char local_ip[] = {192,168,1,108};	// IP address of WiShield
-unsigned char gateway_ip[] = {192,168,1,1};	// router or gateway IP address
+unsigned char local_ip[] = {192,168,0,light_number+1}; // IP address of WiShield
+unsigned char gateway_ip[] = {192,168,0,1};	// router or gateway IP address
 unsigned char subnet_mask[] = {255,255,255,0};	// subnet mask for the local network
 char ssid[] = "saikoled.com";		// max 32 bytes
 
